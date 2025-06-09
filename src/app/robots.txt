@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://kyou-nani-tabeyou.vercel.app/sitemap.xml
+
+# Disallow admin areas (if any)
+Disallow: /api/
+Disallow: /_next/
+
+# Allow important pages
+Allow: /
+Allow: /recipes
+Allow: /simple-test
+
+# Crawl delay
+Crawl-delay: 1 
