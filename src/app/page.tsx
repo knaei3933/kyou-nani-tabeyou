@@ -1,6 +1,7 @@
 // @ts-nocheck
 'use client';
 
+import Link from 'next/link';
 import PWAStatus from '../components/PWAStatus';
 import PerformanceMonitor from '../components/PerformanceMonitor';
 import OfflineTestManager from '../components/OfflineTestManager';
@@ -9,13 +10,6 @@ import { GlassCard, GlassButton } from '../components/ui/glass-card';
 import { gradientText } from '../lib/utils';
 
 export default function HomePage() {
-  const navigateToApp = () => {
-    window.location.href = '/simple-test';
-  };
-
-  const navigateToRecipes = () => {
-    window.location.href = '/recipes';
-  };
 
   return (
     <div style={{ 
@@ -85,31 +79,34 @@ export default function HomePage() {
 
         {/* CTA ボタン */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-          <GlassButton 
-            onClick={navigateToApp}
-            className="px-8 py-4 text-lg font-bold min-w-[250px]"
-          >
-            🍽️ 食事を選択する
-          </GlassButton>
+          <Link href="/simple-test">
+            <GlassButton 
+              className="px-8 py-4 text-lg font-bold min-w-[250px]"
+            >
+              🍽️ 食事を選択する
+            </GlassButton>
+          </Link>
 
-          <GlassButton 
-            onClick={navigateToRecipes}
-            variant="secondary"
-            className="px-8 py-4 text-lg font-bold min-w-[250px]"
-          >
-            📚 全てのレシピを見る
-          </GlassButton>
+          <Link href="/recipes">
+            <GlassButton 
+              variant="secondary"
+              className="px-8 py-4 text-lg font-bold min-w-[250px]"
+            >
+              📚 全てのレシピを見る
+            </GlassButton>
+          </Link>
         </div>
 
         {/* 新機能ボタン */}
         <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8">
-          <GlassButton 
-            onClick={() => window.location.href = '/food-stats'}
-            variant="secondary"
-            className="px-6 py-3 text-sm font-bold"
-          >
-            📊 データ統計を見る
-          </GlassButton>
+          <Link href="/food-stats">
+            <GlassButton 
+              variant="secondary"
+              className="px-6 py-3 text-sm font-bold"
+            >
+              📊 データ統計を見る
+            </GlassButton>
+          </Link>
         </div>
 
         {/* アプリ情報 */}
