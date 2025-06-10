@@ -1,11 +1,9 @@
-import type { NextConfig } from "next";
-
 // バンドル分析用
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 });
 
-const nextConfig: NextConfig = {
+const nextConfig = {
   // PWA 최적화
   compress: true,
   poweredByHeader: false,
