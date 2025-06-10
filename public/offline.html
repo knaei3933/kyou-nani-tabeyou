@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>オフライン - 今日何食べよう</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .container {
+            max-width: 400px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        .icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+        p {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+        .foods {
+            margin-top: 30px;
+            text-align: left;
+        }
+        .food-item {
+            background: rgba(255, 255, 255, 0.1);
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .food-emoji {
+            font-size: 24px;
+        }
+        .food-info {
+            flex: 1;
+        }
+        .food-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .food-desc {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        .retry-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+        .retry-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">📱</div>
+        <h1>オフライン状態です</h1>
+        <p>
+            インターネット接続を確認してください。<br>
+            オフラインでも一部のコンテンツを表示できます。
+        </p>
+        
+        <div class="foods">
+            <h3>🍽️ 人気料理（オフライン利用可能）</h3>
+            
+            <div class="food-item">
+                <div class="food-emoji">🍜</div>
+                <div class="food-info">
+                    <div class="food-name">ラーメン</div>
+                    <div class="food-desc">600-1000円 • 45分 • 中級</div>
+                </div>
+            </div>
+            
+            <div class="food-item">
+                <div class="food-emoji">🍣</div>
+                <div class="food-info">
+                    <div class="food-name">寿司</div>
+                    <div class="food-desc">1000-3000円 • 30分 • 上級</div>
+                </div>
+            </div>
+            
+            <div class="food-item">
+                <div class="food-emoji">🍛</div>
+                <div class="food-info">
+                    <div class="food-name">カレー</div>
+                    <div class="food-desc">500-1000円 • 40分 • 初級</div>
+                </div>
+            </div>
+        </div>
+        
+        <button class="retry-btn" onclick="location.reload()">
+            🔄 再試行
+        </button>
+    </div>
+    
+    <script>
+        // オンライン状態復帰時の自動リロード
+        window.addEventListener('online', () => {
+            location.reload();
+        });
+        
+        // PWA 스테이터스 표시
+        if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) {
+            console.log('PWA 모드에서 실행 중');
+        }
+    </script>
+</body>
+</html> 

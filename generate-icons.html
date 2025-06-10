@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PWA アイコン生成</title>
+</head>
+<body>
+    <h1>🍽️ PWA アイコン生成ツール</h1>
+    <p>下のボタンをクリックして各サイズのアイコンをダウンロードしてください</p>
+    
+    <canvas id="canvas" style="border: 1px solid #ccc; margin: 10px;"></canvas>
+    <br>
+    
+    <button onclick="generateIcon(192)">192x192 アイコン生成</button>
+    <button onclick="generateIcon(512)">512x512 アイコン生成</button>
+    <button onclick="generateIcon(180)">180x180 Apple Touch アイコン生成</button>
+    <button onclick="generateIcon(96)">96x96 ショートカットアイコン生成</button>
+    
+    <script>
+        function generateIcon(size) {
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // キャンバスサイズ設定
+            canvas.width = size;
+            canvas.height = size;
+            
+            // 背景グラデーション
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#667eea');
+            gradient.addColorStop(1, '#764ba2');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, size, size);
+            
+            // 料理アイコン描画
+            ctx.font = `${size * 0.4}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = 'white';
+            ctx.fillText('🍽️', size/2, size/2);
+            
+            // ダウンロードリンク生成
+            canvas.toBlob(function(blob) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `icon-${size}x${size}.png`;
+                if (size === 180) {
+                    a.download = 'apple-touch-icon.png';
+                }
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 'image/png');
+        }
+    </script>
+</body>
+</html> 

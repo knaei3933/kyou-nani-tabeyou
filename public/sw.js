@@ -1,5 +1,5 @@
 // Service Worker for PWA functionality - Performance Optimized
-const CACHE_VERSION = 'v3-performance';
+const CACHE_VERSION = 'v4-offline-support';
 const STATIC_CACHE = `kyou-nani-tabeyou-static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `kyou-nani-tabeyou-dynamic-${CACHE_VERSION}`;
 const API_CACHE = `kyou-nani-tabeyou-api-${CACHE_VERSION}`;
@@ -9,9 +9,13 @@ const STATIC_CACHE_URLS = [
   '/',
   '/simple-test',
   '/recipes',
+  '/food-stats',
+  '/offline.html',
   '/manifest.json',
   '/icon-192x192.png',
-  '/icon-512x512.png'
+  '/icon-512x512.png',
+  '/apple-touch-icon.png',
+  '/icon-96x96.png'
 ];
 
 // APIリソース（短期キャッシュ）
@@ -205,12 +209,55 @@ self.addEventListener('fetch', (event) => {
         }
         return response;
       }).catch(() => {
-        // ナビゲーションリクエストの場合はホームページを返す
+        // ナビゲーションリクエストの場合はオフラインページを返す
         if (request.mode === 'navigate') {
-          return caches.match('/').then(response => {
-            return response || new Response('オフライン状態です', {
-              status: 503,
-              statusText: 'Service Unavailable',
+          return caches.match('/offline.html').then(response => {
+            return response || new Response(`
+              <!DOCTYPE html>
+              <html>
+              <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>オフライン</title>
+                <style>
+                  body { 
+                    font-family: Arial, sans-serif; 
+                    text-align: center; 
+                    padding: 50px; 
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    color: white;
+                    min-height: 100vh;
+                    margin: 0;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                  }
+                  .container {
+                    background: rgba(255,255,255,0.1);
+                    padding: 40px;
+                    border-radius: 20px;
+                    backdrop-filter: blur(10px);
+                  }
+                </style>
+              </head>
+              <body>
+                <div class="container">
+                  <h1>📱 オフライン状態</h1>
+                  <p>インターネット接続を確認してください</p>
+                  <button onclick="location.reload()" style="
+                    background: rgba(255,255,255,0.2);
+                    border: 2px solid rgba(255,255,255,0.3);
+                    color: white;
+                    padding: 12px 24px;
+                    border-radius: 25px;
+                    cursor: pointer;
+                  ">🔄 再試行</button>
+                </div>
+              </body>
+              </html>
+            `, {
+              status: 200,
+              statusText: 'OK',
               headers: { 'Content-Type': 'text/html; charset=utf-8' }
             });
           });
