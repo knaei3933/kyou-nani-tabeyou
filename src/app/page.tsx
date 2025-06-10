@@ -52,29 +52,35 @@ export default function HomePage() {
 
         {/* 主要機能 */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <AnimatedCard gradient glow>
-            <div className="text-4xl mb-4">🍽️</div>
-            <h3 className="text-xl font-bold mb-3 text-gray-800">食事選択</h3>
-            <p className="text-sm opacity-80 text-gray-600">
-              ラーメン、寿司、ピザ...今日食べたい料理を簡単に選択できます
-            </p>
-          </AnimatedCard>
+          <Link href="/simple-test">
+            <AnimatedCard gradient glow className="cursor-pointer">
+              <div className="text-4xl mb-4">🍽️</div>
+              <h3 className="text-xl font-bold mb-3 text-gray-800">食事選択</h3>
+              <p className="text-sm opacity-80 text-gray-600">
+                ラーメン、寿司、ピザ...今日食べたい料理を簡単に選択できます
+              </p>
+            </AnimatedCard>
+          </Link>
 
-          <AnimatedCard gradient glow>
-            <div className="text-4xl mb-4">🚚</div>
-            <h3 className="text-xl font-bold mb-3 text-gray-800">配達連携</h3>
-            <p className="text-sm opacity-80 text-gray-600">
-              Uber Eats、出前館、Woltで直接注文またはグルメ店検索
-            </p>
-          </AnimatedCard>
+          <Link href="/recipes">
+            <AnimatedCard gradient glow className="cursor-pointer">
+              <div className="text-4xl mb-4">🚚</div>
+              <h3 className="text-xl font-bold mb-3 text-gray-800">配達連携</h3>
+              <p className="text-sm opacity-80 text-gray-600">
+                Uber Eats、出前館、Woltで直接注文またはグルメ店検索
+              </p>
+            </AnimatedCard>
+          </Link>
 
-          <AnimatedCard gradient glow>
-            <div className="text-4xl mb-4">🍳</div>
-            <h3 className="text-xl font-bold mb-3 text-gray-800">レシピ提供</h3>
-            <p className="text-sm opacity-80 text-gray-600">
-              自分で作りたい場合は一人分のカスタマイズレシピも提供
-            </p>
-          </AnimatedCard>
+          <Link href="/recipes">
+            <AnimatedCard gradient glow className="cursor-pointer">
+              <div className="text-4xl mb-4">🍳</div>
+              <h3 className="text-xl font-bold mb-3 text-gray-800">レシピ提供</h3>
+              <p className="text-sm opacity-80 text-gray-600">
+                自分で作りたい場合は一人分のカスタマイズレシピも提供
+              </p>
+            </AnimatedCard>
+          </Link>
         </div>
 
         {/* CTA ボタン */}
