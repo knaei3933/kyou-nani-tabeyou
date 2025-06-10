@@ -29,7 +29,7 @@ const nextConfig: NextConfig = {
   
   // 高級성능 최적화（turboをturbopackに移動）
   experimental: {
-    optimizeCss: true,
+    // optimizeCss: true, // Vercel配備時critters依存性問題のため一時無効化
     optimizePackageImports: ['react', 'react-dom'],
   },
   
