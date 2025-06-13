@@ -3,139 +3,394 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>オフライン - 今日何食べよう</title>
+    <title>오프라인 모드 - 今日何食べよう？</title>
+    <link rel="icon" href="/icon-192x192.png">
     <style>
-        body {
-            font-family: 'Helvetica Neue', Arial, sans-serif;
+        * {
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+        }
+
+        .offline-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 480px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .offline-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .offline-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #2d3748;
+        }
+
+        .offline-message {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            color: #4a5568;
+        }
+
+        .cached-foods {
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+
+        .cached-foods h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #2d3748;
+            text-align: center;
+        }
+
+        .food-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .food-item {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .food-item:hover {
+            transform: translateY(-2px);
+        }
+
+        .food-emoji {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .food-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            min-height: 100vh;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.8);
+            color: #4a5568;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            transform: translateY(-1px);
+        }
+
+        .connection-status {
             display: flex;
             align-items: center;
             justify-content: center;
-            text-align: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding: 0.5rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
         }
-        .container {
-            max-width: 400px;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 40px;
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+
+        .status-offline {
+            background: rgba(248, 113, 113, 0.1);
+            color: #dc2626;
         }
-        .icon {
-            font-size: 60px;
-            margin-bottom: 20px;
+
+        .status-online {
+            background: rgba(34, 197, 94, 0.1);
+            color: #16a34a;
         }
-        h1 {
-            font-size: 24px;
-            margin-bottom: 15px;
-            color: #fff;
+
+        .pulse {
+            animation: pulse 2s infinite;
         }
-        p {
-            font-size: 16px;
-            line-height: 1.6;
-            margin-bottom: 20px;
-            opacity: 0.9;
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
         }
-        .foods {
-            margin-top: 30px;
+
+        .tips {
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 4px solid #3b82f6;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 0 8px 8px 0;
             text-align: left;
         }
-        .food-item {
-            background: rgba(255, 255, 255, 0.1);
-            margin: 10px 0;
-            padding: 15px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+
+        .tips h4 {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            color: #1e40af;
         }
-        .food-emoji {
-            font-size: 24px;
+
+        .tips ul {
+            list-style-type: none;
+            padding-left: 0;
         }
-        .food-info {
-            flex: 1;
+
+        .tips li {
+            padding: 0.25rem 0;
+            color: #475569;
+            font-size: 0.9rem;
         }
-        .food-name {
-            font-weight: bold;
-            margin-bottom: 5px;
+
+        .tips li::before {
+            content: "💡 ";
+            margin-right: 0.5rem;
         }
-        .food-desc {
-            font-size: 12px;
-            opacity: 0.8;
-        }
-        .retry-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 25px;
-            font-size: 16px;
-            cursor: pointer;
-            margin-top: 20px;
-            transition: all 0.3s ease;
-        }
-        .retry-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
+
+        @media (max-width: 640px) {
+            .offline-container {
+                padding: 1.5rem;
+                margin: 1rem;
+            }
+
+            .food-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="icon">📱</div>
-        <h1>オフライン状態です</h1>
-        <p>
-            インターネット接続を確認してください。<br>
-            オフラインでも一部のコンテンツを表示できます。
-        </p>
+    <div class="offline-container">
+        <!-- オフラインアイコン -->
+        <div class="offline-icon">🔌📱</div>
         
-        <div class="foods">
-            <h3>🍽️ 人気料理（オフライン利用可能）</h3>
-            
-            <div class="food-item">
-                <div class="food-emoji">🍜</div>
-                <div class="food-info">
+        <!-- タイトルとメッセージ -->
+        <h1 class="offline-title">オフライン モード</h1>
+        <p class="offline-message">
+            インターネット接続が見つかりません。<br>
+            でも大丈夫！キャッシュされた料理データをご覧いただけます。
+        </p>
+
+        <!-- キャッシュされた料理データ -->
+        <div class="cached-foods">
+            <h3>🍽️ オフラインで見られる料理</h3>
+            <div class="food-grid">
+                <div class="food-item">
+                    <div class="food-emoji">🍜</div>
                     <div class="food-name">ラーメン</div>
-                    <div class="food-desc">600-1000円 • 45分 • 中級</div>
                 </div>
-            </div>
-            
-            <div class="food-item">
-                <div class="food-emoji">🍣</div>
-                <div class="food-info">
-                    <div class="food-name">寿司</div>
-                    <div class="food-desc">1000-3000円 • 30分 • 上級</div>
-                </div>
-            </div>
-            
-            <div class="food-item">
-                <div class="food-emoji">🍛</div>
-                <div class="food-info">
+                <div class="food-item">
+                    <div class="food-emoji">🍛</div>
                     <div class="food-name">カレー</div>
-                    <div class="food-desc">500-1000円 • 40分 • 初級</div>
+                </div>
+                <div class="food-item">
+                    <div class="food-emoji">🍣</div>
+                    <div class="food-name">寿司</div>
+                </div>
+                <div class="food-item">
+                    <div class="food-emoji">🍝</div>
+                    <div class="food-name">パスタ</div>
+                </div>
+                <div class="food-item">
+                    <div class="food-emoji">🍕</div>
+                    <div class="food-name">ピザ</div>
+                </div>
+                <div class="food-item">
+                    <div class="food-emoji">🥗</div>
+                    <div class="food-name">サラダ</div>
                 </div>
             </div>
         </div>
-        
-        <button class="retry-btn" onclick="location.reload()">
-            🔄 再試行
-        </button>
+
+        <!-- アクションボタン -->
+        <div class="action-buttons">
+            <button class="btn btn-primary" onclick="goHome()">
+                🏠 ホームに戻る
+            </button>
+            <button class="btn btn-secondary" onclick="retryConnection()">
+                🔄 再接続を試す
+            </button>
+        </div>
+
+        <!-- 接続状態表示 -->
+        <div id="connectionStatus" class="connection-status status-offline">
+            <span class="pulse">🔴</span>
+            <span>オフライン状態</span>
+        </div>
+
+        <!-- オフライン時のティップス -->
+        <div class="tips">
+            <h4>💡 オフライン時のヒント</h4>
+            <ul>
+                <li>過去に閲覧したページは利用可能です</li>
+                <li>お気に入りの料理は保存されています</li>
+                <li>接続が復活すると自動で最新データを取得します</li>
+                <li>このアプリはオフラインでも動作するPWAです</li>
+            </ul>
+        </div>
     </div>
-    
+
     <script>
-        // オンライン状態復帰時の自動リロード
-        window.addEventListener('online', () => {
-            location.reload();
-        });
-        
-        // PWA 스테이터스 표시
-        if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) {
-            console.log('PWA 모드에서 실행 중');
+        // 接続状態の監視
+        function updateConnectionStatus() {
+            const statusEl = document.getElementById('connectionStatus');
+            
+            if (navigator.onLine) {
+                statusEl.className = 'connection-status status-online';
+                statusEl.innerHTML = '<span>🟢</span><span>オンライン状態</span>';
+                
+                // オンライン復旧時の自動リダイレクト
+                setTimeout(() => {
+                    if (confirm('接続が復旧しました！最新のデータを取得しますか？')) {
+                        window.location.href = '/';
+                    }
+                }, 1000);
+            } else {
+                statusEl.className = 'connection-status status-offline';
+                statusEl.innerHTML = '<span class="pulse">🔴</span><span>オフライン状態</span>';
+            }
         }
+
+        // ホームページに戻る
+        function goHome() {
+            window.location.href = '/';
+        }
+
+        // 再接続を試す
+        function retryConnection() {
+            if (navigator.onLine) {
+                window.location.reload();
+            } else {
+                alert('まだオフライン状態です。もう一度お試しください。');
+            }
+        }
+
+        // 料理アイテムクリック処理
+        document.querySelectorAll('.food-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const foodName = this.querySelector('.food-name').textContent;
+                alert(`${foodName}の詳細情報は、オンライン時にご利用いただけます。`);
+            });
+        });
+
+        // イベントリスナー設定
+        window.addEventListener('online', updateConnectionStatus);
+        window.addEventListener('offline', updateConnectionStatus);
+
+        // 初期状態設定
+        updateConnectionStatus();
+
+        // Service Worker からのメッセージ受信
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.addEventListener('message', (event) => {
+                if (event.data.type === 'CACHE_UPDATED') {
+                    console.log('キャッシュが更新されました');
+                }
+            });
+        }
+
+        // PWA インストール促進
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            // インストールボタンを表示
+            if (!window.matchMedia('(display-mode: standalone)').matches) {
+                const installBtn = document.createElement('button');
+                installBtn.className = 'btn btn-primary';
+                installBtn.innerHTML = '📱 アプリをインストール';
+                installBtn.onclick = () => {
+                    deferredPrompt.prompt();
+                    deferredPrompt.userChoice.then((choiceResult) => {
+                        deferredPrompt = null;
+                        installBtn.remove();
+                    });
+                };
+                
+                document.querySelector('.action-buttons').appendChild(installBtn);
+            }
+        });
+
+        console.log('🔌 オフラインページが読み込まれました');
     </script>
 </body>
 </html> 

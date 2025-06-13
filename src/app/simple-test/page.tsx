@@ -1,10 +1,14 @@
 // @ts-nocheck
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { AnimatedCard } from '../../components/ui/animated-card';
 import { GlassCard, GlassButton } from '../../components/ui/glass-card';
+import { FlowNavigationComponent } from '../../components/ui/flow-navigation';
+import { useFlowState } from '../../lib/flowState';
 import { gradientText } from '../../lib/utils';
+import { ResponsiveContainer, ResponsiveGrid, ResponsiveCard, ResponsiveText, ShowOn, HideOn, useScreenSize } from '../../components/ui/ResponsiveLayout';
+import { SidebarNav, HeaderNav, QuickActions } from '../../components/ui/DesktopNavigation';
 import { 
   categories, 
   foods, 
@@ -28,6 +32,27 @@ export default function FoodSelectionPage() {
   const [maxDifficulty, setMaxDifficulty] = useState('上級');
   const [timeOfDay, setTimeOfDay] = useState('all');
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  // 디바이스 타입 감지
+  const { deviceType, isDevice } = useScreenSize();
+
+  // フロー状態管理
+  const { setSelectedFoods: setFlowFoods } = useFlowState();
+
+  // ナビゲーションアイテム
+  const navItems = [
+    { icon: '🏠', label: 'ホーム', href: '/', description: 'メインページ' },
+    { icon: '🍽️', label: '食事選択', href: '/simple-test', description: '今日の食事を選ぶ' },
+    { icon: '📍', label: 'エリア選択', href: '/location-select', description: '配達エリアを指定' },
+    { icon: '🔍', label: '検索結果', href: '/result', description: 'レストランを探す' },
+    { icon: '🏪', label: '詳細・注文', href: '/restaurant', description: 'メニューと注文' },
+  ];
+
+  // 選択された料理をフロー状態に同期
+  useEffect(() => {
+    setFlowFoods(selectedFoods);
+  }, [selectedFoods, setFlowFoods]);
 
   // フィルターされた料理リスト（メモ化）
   const filteredFoods = useMemo(() => {
@@ -92,39 +117,74 @@ export default function FoodSelectionPage() {
     const selectedFoodData = foods.filter(food => selectedFoods.includes(food.id));
     console.log('選択された料理:', selectedFoodData);
     
-    // TODO: 次のページへルーティング（摂取方法選択）
-    alert(`選択された料理: ${selectedFoodData.map(f => f.name).join(', ')}\n\n次のステップで配達・グルメ・レシピを選択できます！`);
+    // /result ページへリダイレクト（選択された料理IDをパラメータとして送信）
+    const foodIds = selectedFoods.join(',');
+    window.location.href = `/result?foods=${foodIds}`;
   };
 
   return (
-    <div style={{ 
-      padding: '16px', 
-      maxWidth: '1200px', 
-      margin: '0 auto',
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)'
-    }}>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50">
+      {/* デスクトップ用サイドバー */}
+      <HideOn device={["mobile", "tablet"]}>
+        <div className="fixed left-0 top-0 h-full z-30">
+          <SidebarNav 
+            items={navItems}
+            currentPage="/simple-test"
+            collapsed={sidebarCollapsed}
+            onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
+          />
+        </div>
+      </HideOn>
+
+      {/* タブレット用ヘッダー */}
+      <ShowOn device="tablet">
+        <div className="fixed top-0 left-0 right-0 z-30">
+          <HeaderNav items={navItems} currentPage="/simple-test" />
+        </div>
+      </ShowOn>
+
+      {/* メインコンテンツエリア */}
+      <div className={`transition-all duration-300 ${
+        isDevice.desktop ? (sidebarCollapsed ? 'ml-16' : 'ml-64') : 
+        isDevice.tablet ? 'mt-16' : ''
+      }`}>
+        <ResponsiveContainer maxWidth="xl" padding="lg">
+          {/* フローナビゲーション */}
+          <FlowNavigationComponent 
+            currentPageStep={1}
+            className="mb-6"
+          />
+
       {/* ヘッダー */}
-      <GlassCard className="mb-6 text-center">
-        <h1 className={`text-4xl md:text-5xl font-bold mb-4 ${gradientText}`}>
-          🍽️ 今日何食べよう？
-        </h1>
-        <p className="text-lg text-gray-600 mb-4">
-          食べたい料理を選んでください
-        </p>
+      <ResponsiveCard variant="default" className="mb-6 text-center">
+        <ResponsiveText as="h1" size="4xl" weight="bold" className={`mb-4 ${gradientText}`}>
+          🤔 食べたい料理を選択
+        </ResponsiveText>
+        <ResponsiveText as="p" size="lg" className="text-gray-600 mb-4">
+          複数選択可能です。お好みの料理をクリックしてください。
+        </ResponsiveText>
+        
+        {/* 選択状況表示 */}
+        {selectedFoods.length > 0 && (
+          <div className="bg-green-50 border border-green-200 rounded-lg p-3 mt-4">
+            <p className="text-green-700 font-semibold">
+              ✅ {selectedFoods.length}件の料理が選択されています
+            </p>
+          </div>
+        )}
         
         {/* ホームに戻るボタン */}
         <GlassButton
           onClick={() => window.location.href = '/'}
           variant="secondary"
-          className="text-sm"
+          className="text-sm mt-4"
         >
           🏠 ホーム
         </GlassButton>
-      </GlassCard>
+      </ResponsiveCard>
 
       {/* フィルターとコントロール */}
-      <GlassCard className="mb-6">
+      <ResponsiveCard variant="default" className="mb-6">
         {/* 検索バー */}
         <div className="mb-4">
           <div className="relative">
@@ -280,10 +340,14 @@ export default function FoodSelectionPage() {
             </div>
           )}
         </div>
-      </GlassCard>
+      </ResponsiveCard>
 
       {/* 料理グリッド */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mb-6">
+      <ResponsiveGrid 
+        cols={{ mobile: 2, tablet: 4, desktop: 5 }}
+        gap="lg"
+        className="mb-6"
+      >
         {filteredFoods.map((food) => (
           <AnimatedCard
             key={food.id}
@@ -370,7 +434,7 @@ export default function FoodSelectionPage() {
             </div>
           </AnimatedCard>
         ))}
-      </div>
+      </ResponsiveGrid>
 
       {/* 進行ボタン */}
       {selectedFoods.length > 0 && (
@@ -386,16 +450,35 @@ export default function FoodSelectionPage() {
 
       {/* 結果がない時 */}
       {filteredFoods.length === 0 && (
-        <GlassCard className="text-center py-12">
+        <ResponsiveCard variant="default" className="text-center py-12">
           <div className="text-5xl mb-4">😅</div>
-          <h3 className="text-xl font-bold text-gray-700 mb-2">
+          <ResponsiveText as="h3" size="xl" weight="bold" className="text-gray-700 mb-2">
             該当する料理がありません
-          </h3>
-          <p className="text-gray-600">
+          </ResponsiveText>
+          <ResponsiveText as="p" size="base" className="text-gray-600">
             フィルターを変更してみてください
-          </p>
-        </GlassCard>
+          </ResponsiveText>
+        </ResponsiveCard>
       )}
+
+      {/* デスクトップ専用クイックアクション */}
+      <ShowOn device="desktop">
+        <QuickActions 
+          actions={[
+            { icon: '🏠', label: 'ホーム', action: () => window.location.href = '/' },
+            { icon: '📍', label: 'エリア選択', action: () => window.location.href = '/location-select' },
+            { icon: '🔄', label: 'リセット', action: () => {
+              setSelectedFoods([]);
+              setSelectedCategory('all');
+              setSearchQuery('');
+              setShowOnlyPopular(true);
+            }},
+            { icon: '💡', label: 'ヒント', action: () => alert('💡 人気料理を中心に選択すると、より多くのレストラン選択肢が表示されます！') }
+          ]}
+        />
+      </ShowOn>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 } 

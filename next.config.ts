@@ -33,10 +33,10 @@ const nextConfig = {
   
   // Turbopack설정 분리
   turbopack: {
-    rules: {
-      '*.svg': {
-        loaders: ['@svgr/webpack'],
-        as: '*.js',
+      rules: {
+        '*.svg': {
+          loaders: ['@svgr/webpack'],
+          as: '*.js',
       },
     },
   },
