@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // React Strict Mode 설정 (루트 레벨에 위치)
+  reactStrictMode: true,
+
   // 이미지 최적화 설정
   images: {
     // 허용된 이미지 도메인 (외부 이미지 소스)
@@ -11,8 +14,6 @@ const nextConfig = {
     ],
     // 이미지 형식 설정 (WebP 자동 변환)
     formats: ['image/webp', 'image/avif'],
-    // 이미지 최적화 품질 (1-100, 기본값 75)
-    quality: 85,
     // 디바이스별 이미지 크기 설정
     deviceSizes: [320, 420, 640, 768, 1024, 1200, 1920],
     // 이미지 크기 브레이크포인트
@@ -37,10 +38,6 @@ const nextConfig = {
 
   // 성능 최적화 설정
   experimental: {
-    // 이미지 최적화 개선
-    optimizeImages: true,
-    // 번들 분석기 활성화
-    bundlePagesRouterDependencies: true,
     // 메모리 사용량 최적화
     optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
   },
@@ -49,8 +46,6 @@ const nextConfig = {
   compiler: {
     // 프로덕션에서 console.log 제거
     removeConsole: process.env.NODE_ENV === 'production',
-    // React Strict Mode 활성화
-    reactStrictMode: true,
   },
 
   // Webpack 설정 커스터마이징
@@ -135,9 +130,6 @@ const nextConfig = {
 
   // 압축 설정
   compress: true,
-  
-  // 전력 효율성 우선 (Power Preference)
-  powerPreference: 'default',
 
   // 페이지 확장자 설정
   pageExtensions: ['ts', 'tsx', 'js', 'jsx'],
@@ -148,41 +140,6 @@ const nextConfig = {
   // 빌드 ID 생성
   generateBuildId: async () => {
     return `build_${Date.now()}`
-  },
-
-  // PWA 설정 (next-pwa와 함께 사용 시)
-  pwa: {
-    dest: 'public',
-    register: true,
-    skipWaiting: true,
-    runtimeCaching: [
-      {
-        urlPattern: /^https?.*/,
-        handler: 'NetworkFirst',
-        options: {
-          cacheName: 'https-calls',
-          networkTimeoutSeconds: 15,
-          expiration: {
-            maxEntries: 150,
-            maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
-          },
-          cacheableResponse: {
-            statuses: [0, 200],
-          },
-        },
-      },
-      {
-        urlPattern: /\.(png|jpg|jpeg|svg|gif|webp|avif)$/,
-        handler: 'CacheFirst',
-        options: {
-          cacheName: 'image-cache',
-          expiration: {
-            maxEntries: 100,
-            maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
-          },
-        },
-      },
-    ],
   },
 };
 
