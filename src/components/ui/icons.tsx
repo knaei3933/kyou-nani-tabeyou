@@ -24,6 +24,7 @@ import {
   Filter,
   ArrowUp,
   ArrowDown,
+  ArrowLeft,
   BarChart,
   TrendingUp,
   Activity,
@@ -41,6 +42,7 @@ import {
   Sun,
   Moon,
   Laptop,
+  Users,
 } from 'lucide-react'
 
 export const Icons = {
@@ -69,6 +71,7 @@ export const Icons = {
   filter: Filter,
   arrowUp: ArrowUp,
   arrowDown: ArrowDown,
+  arrowLeft: ArrowLeft,
   barChart: BarChart,
   trendingUp: TrendingUp,
   activity: Activity,
@@ -86,6 +89,7 @@ export const Icons = {
   sun: Sun,
   moon: Moon,
   laptop: Laptop,
+  users: Users,
   google: (props: any) => (
     <svg
       {...props}
