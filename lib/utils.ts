@@ -103,4 +103,4 @@ export const blurBackgrounds = {
   glass: "backdrop-blur-md bg-white/80 dark:bg-gray-900/80",
   strong: "backdrop-blur-lg bg-white/90 dark:bg-gray-900/90",
   subtle: "backdrop-blur-sm bg-white/70 dark:bg-gray-900/70"
-}; 
+};
